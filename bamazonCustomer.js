@@ -60,39 +60,49 @@ function start(res) {
       start(res);
     }
 
-    var id = answer.id;
+    for (var i=0; i < res.length; i++) {
+      if (res[i].item_id == answer.id) {
+        var id = i;
 
-    inquirer
-    .prompt(
-    {
-      name: "units",
-      type: "input",
-      message: "How many units of this product?",
-      validate: function (value) {
-        if (isNaN (value) == false) {
-            return true;
-        } else {
-            return false;
+        console.log(id);
+
+      inquirer
+      .prompt(
+      {
+        name: "units",
+        type: "input",
+        message: "How many units of this product?",
+        validate: function (value) {
+          if (isNaN (value) == false) {
+              return true;
+          } else {
+              return false;
+          }
         }
-      }
-    })
-    .then(function(answer) {
+      })
+        .then(function(answer) {
 
-    console.log(res);
-    
-    if (answer.units > res[id].stock_quantity) {
-      console.log("Store does have that much in stock");
-      start(res);
-    }
+        console.log(res[id]);
+        
+        if (answer.units > res[id].stock_quantity) {
+          console.log("Store does have that much in stock");
+          start(res);
+        }
 
-    var query = "UPDATE products SET stock_quantity='" + (res[id].stock_quantity - answer.units) + "' WHERE item_id='" + id +"'";
-    connection.query(query, function(err, res) {
-      if (err) throw err;
+        var query = "UPDATE products SET stock_quantity='" + (res[id].stock_quantity - answer.units) + "' WHERE item_id='" + res[id].item_id +"'";
 
-      var cost = (answer.units * res[id].price)
+        connection.query(query, function(err, res) {
+          if (err) throw err;
 
-      console.log("You bought " + answer.units + " " + res[id].item_id + " for " + cost);
-    });
-  })
+          // console.log(res[id]);
+          // var cost = (answer.units * res[id].price)
+
+          // console.log("You bought " + answer.units + " " + res[id].item_id + " for " + cost);
+
+          console.log("product bought");
+          createTable();;
+        });
+      })
+    }}
   });
 }
